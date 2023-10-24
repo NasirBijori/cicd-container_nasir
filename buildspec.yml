@@ -6,11 +6,13 @@ phases:
       - echo $(aws ecr get-login-password --region us-east-1) | docker login --username AWS --password-stdin 266855622399.dkr.ecr.us-east-1.amazonaws.com
   build:
     commands:
+      - service docker start  # Start Docker daemon
       - docker build -t work-local:latest .
       - docker tag work-local:latest 266855622399.dkr.ecr.us-east-1.amazonaws.com/cicd_container_nasir
   post_build:
     commands:
+      - service docker start  # Start Docker daemon
       - docker push 266855622399.dkr.ecr.us-east-1.amazonaws.com/cicd_container_nasir
-      - printf '[{"name":helloWorld ,"imageUri":"%s"}]' 266855622399.dkr.ecr.us-east-1.amazonaws.com/cicd_container_nasir > imagedefinitions.json
+      - printf '[{"name": "helloWorld", "imageUri": "%s"}]' 266855622399.dkr.ecr.us-east-1.amazonaws.com/cicd_container_nasir > imagedefinitions.json
 artifacts:
   files: imagedefinitions.json
