@@ -7,11 +7,13 @@ phases:
   build:
     commands:
       - service docker start  # Start Docker daemon
+      - while [ ! -S /var/run/docker.sock ]; do sleep 1; done  # Wait until Docker socket is available
       - docker build -t work-local:latest .
       - docker tag work-local:latest 266855622399.dkr.ecr.us-east-1.amazonaws.com/cicd_container_nasir
   post_build:
     commands:
       - service docker start  # Start Docker daemon
+      - while [ ! -S /var/run/docker.sock ]; do sleep 1; done  # Wait until Docker socket is available
       - docker push 266855622399.dkr.ecr.us-east-1.amazonaws.com/cicd_container_nasir
       - printf '[{"name": "helloWorld", "imageUri": "%s"}]' 266855622399.dkr.ecr.us-east-1.amazonaws.com/cicd_container_nasir > imagedefinitions.json
 artifacts:
